@@ -21,7 +21,7 @@ BgPtr:      .res 2           ; Pointer to background address - 16bits (lo,hi)
 ;; PS: PAL frames runs ~20% slower than NTSC frames. Adjust accordingly!
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 MAXSPEED = 120               ; Max speed limit in 1/256 px/frame
-ACCEL    = 2                 ; Movement acceleration in 1/256 px/frame^2
+ACCEL    = 3                 ; Movement acceleration in 1/256 px/frame^2
 BRAKE    = 2                 ; Stopping acceleration in 1/256 px/frame^2
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -112,9 +112,7 @@ InitVariables:
     lda #0
     sta Frame                ; Frame = 0
     sta Clock60              ; Clock60 = 0
-
-    lda #20
-    sta XVel                 ; XVel is 20 pixels per 256 frames
+    sta XVel                 ; XVel is 0 pixels per 256 frames
 
     ldx #0
     lda SpriteData,x         ; Initialize sprite Y position from ROM lookup-table
@@ -156,26 +154,32 @@ ControllerInput:
     jsr ReadControllers      ; Jump to the subroutine that reads the controller buttons
 
 CheckRightButton:
+    lda Buttons
+    and #BUTTON_RIGHT
+    beq NotRight
+        lda XVel
+        bmi NotRight
+            ADD #ACCEL
+            MIN #MAXSPEED
+            sta XVel
+            jmp CheckLeftButton
+
+    NotRight:
+        lda XVel
+        bmi CheckLeftButton
+            MAX #BRAKE
+            SUB #BRAKE
+            sta XVel
+
+CheckLeftButton:
     ;; TODO:
     ;; If I press right, I want to increase the velocity by the ACCEL
     ;; If I am not pressing right, I need to brake the movement using BRAKE
 
-CheckLeftButton:
-    ;; TODO
-CheckDownButton:
-    ;; TODO:
-CheckUpButton:
-    ;; TODO:
-EndInputCheck:
+
 
 UpdateSpritePosition:
-    lda XVel
-    clc
-    adc XPos                 ; Add the velocity to the X position lo-byte
-    sta XPos
-    lda #0
-    adc XPos+1               ; Add the hi-byte (using the carry of the previous add)
-    sta XPos+1
+    ADD_FIXED XPos, XVel
 
 DrawSpriteTile:
     lda XPos+1

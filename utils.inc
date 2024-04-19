@@ -16,3 +16,37 @@
     lda val
     sta PPU_DATA             ; Send value to PPU register at $2007
 .endmacro
+
+.macro ADD_FIXED fixedPoint, singleByte
+    lda singleByte
+    clc
+    adc fixedPoint                 ; Add the velocity to the X position lo-byte
+    sta fixedPoint
+    lda #0
+    adc fixedPoint+1               ; Add the hi-byte (using the carry of the previous add)
+    sta fixedPoint+1
+.endmacro
+
+.macro ADD val
+    clc
+    adc val
+.endmacro
+
+.macro SUB val
+    sec
+    sbc val
+.endmacro
+
+.macro MIN val
+    cmp val
+    bcc :+
+        lda val
+    :
+.endmacro
+
+.macro MAX val
+    cmp val
+    bcs :+
+        lda val
+    :
+.endmacro
