@@ -9,7 +9,7 @@ Frame:          .res 1           ; Counts frames
 Clock60:        .res 1           ; Counter that increments per second (60 frames)
 BgPtr:          .res 2           ; Pointer to background address - 16bits (lo,hi)
 IsDrawComplete: .res 1
-ZCounter:       .res 1
+ZReg:       .res 1
 
 .segment "RAM"   
 Board1:     .res 256
