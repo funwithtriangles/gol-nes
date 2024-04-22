@@ -50,10 +50,6 @@ LoopForever:
 NMI:
     inc Frame                ; Frame++
 
-OAMStartDMACopy:             ; DMA copy of OAM data from RAM to PPU
-    lda #$02                 ; Every frame, we copy spite data starting at $02**
-    sta PPU_OAM_DMA          ; The OAM-DMA copy starts when we write to $4014
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; IRQ interrupt handler
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

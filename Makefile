@@ -2,8 +2,8 @@
 # Rule to assemble and link all assembly files
 ###############################################################################
 build:
-	ca65 movingtank.asm -o movingtank.o
-	ld65 -C nes.cfg movingtank.o -o movingtank.nes
+	ca65 main.asm -o gol.o
+	ld65 -C nes.cfg gol.o -o gol.nes
 
 ###############################################################################
 # Rule to remove all object (.o) and cartridge (.nes) files
@@ -15,4 +15,4 @@ clean:
 # Rule to run the final cartridge .nes file in the FCEUX emulator
 ###############################################################################
 run:
-	fceux movingtank.nes
+	fceux gol.nes
