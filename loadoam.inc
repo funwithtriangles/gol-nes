@@ -17,17 +17,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .proc LoadBackground
     PPU_SETADDR $2000
-    ldx #$00                 ; X = 0 --> x is the outer loop index (hi-byte) from $0 to $4
-    ldy #$00                 ; Y = 0 --> y is the inner loop index (lo-byte) from $0 to $FF
+    ldy #$00                 
 Loop:
-    tya
-    lda #$10
-Store:
+    lda InitialBoard,y
     sta PPU_DATA             ; Store in the PPU data
     iny                      ; Y++
-    bne Loop                 ;   Then: we need to increase the hi-byte
-    inx                      ; X++
-    cpx #4                   ; Compare X with #4
-    bne Loop            ;   If X is still not 4, then we keep looping back to the outer loop
-    rts                      ; Return from subroutine
+    bne Loop                 ; Exit loop if Y has wrapped to 0
+    rts
 .endproc
