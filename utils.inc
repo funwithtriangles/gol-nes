@@ -9,6 +9,14 @@
     sta PPU_ADDR             ; Store the lo-byte into PPU_ADDR $2006
 .endmacro
 
+.macro PPU_SETADDR_PTR ptr
+    bit PPU_STATUS           ; Read from PPU_STATUS to reset the address latch
+    lda ptr+1              ; Fetch the hi-byte from 16-bit address
+    sta PPU_ADDR             ; Store the hi-byte into PPU_ADDR $2006
+    lda ptr              ; Fetch the lo-byte from 16-bit address
+    sta PPU_ADDR             ; Store the lo-byte into PPU_ADDR $2006
+.endmacro
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Macro to send a value to the PPU_DATA (at $2007)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
