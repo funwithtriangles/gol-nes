@@ -16,6 +16,7 @@ CurrCellDraw:   .res 1
 CurrBoardRd:    .res 1
 BoardPtrRd:     .res 2
 BoardPtrWr:     .res 2
+CurrCellIsAlive:.res 1
 
 
 
@@ -42,6 +43,7 @@ InitVariables:
     sta Frame                ; Frame = 0
     sta CurrCellDraw
     sta CurrBoardRd
+    sta CurrCellIsAlive
     
     RESET_BG_PTR
     SET_PTR BoardPtrWr,Board1
@@ -59,34 +61,98 @@ EnablePPURendering:
     sta PPU_MASK             ; Set PPU_MASK bits to render the background
 
 
+.macro CheckCell
+lda (BoardPtrRd),y
+beq :+
+    inx
+:
+.endmacro
 ; CELL IS DEAD, UNLESS...
 ; 3 = ALIVE
 ; Alive?, 2 = ALIVE
 GameLoop:
     ldy #0
     Loop:
-        ; lda (BoardPtrRd),y
-        dey 
+        ldx #0
+        stx CurrCellIsAlive
+
+        ; Check curr cell
         lda (BoardPtrRd),y
-        beq Continue
+        beq :+
+            inc CurrCellIsAlive
+        :
+
+        ; Check prev cell
+        dey 
+        CheckCell
+
+        ; Check next cell
+        iny
+        iny
+        CheckCell
+
+        ; Check row above, right
+        tya
+        sec
+        sbc #16
+        tay
+        CheckCell
+
+        ; Check row above, middle
+        dey 
+        CheckCell
+
+        ; Check row above, left
+        dey
+        CheckCell
+
+        ; Check row below, left
+        tya
+        clc
+        adc #32
+        tay
+        CheckCell
+
+        ; Check row below, middle
+        iny 
+        CheckCell
+
+        ; Check row below, right
+        iny
+        CheckCell
+
+        ; Reset y
+        tya
+        sec
+        sbc #17
+        tay
+
+        cpx #3
+        beq Alive
+        
+        lda CurrCellIsAlive
+        beq Dead
+            cpx #2
+            beq Alive
+
+        Dead:
+            lda #$0
+            jmp Continue
+
         Alive:
             lda #$1
+          
         Continue:
-            iny
             sta (BoardPtrWr),y
             iny
             bne Loop
 
     SwapBoards
 
-    ; TODO: Probably nicer way to pause
+     ; TODO: Probably nicer way to pause
     jsr WaitFrame
-    jsr WaitFrame
-    jsr WaitFrame
-    jsr WaitFrame
-    jsr WaitFrame
-    jsr WaitFrame
-    
+
+   
     jmp GameLoop
 
 
@@ -144,22 +210,22 @@ AttributeData:
 .byte %11111111, %11111111, %11111111, %11111111, %11111111, %11111111, %11111111, %11111111
 
 InitialBoard:
-.byte $1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+.byte $0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+.byte $0,$0,$0,$0,$0,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+.byte $0,$0,$0,$0,$1,$0,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0
+.byte $0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+.byte $0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+.byte $0,$0,$0,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+.byte $0,$0,$1,$0,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+.byte $0,$0,$0,$0,$1,$0,$0,$0,$0,$1,$0,$0,$0,$0,$0,$0
+.byte $0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$0,$0,$0,$0,$0
+.byte $0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$1,$0,$0,$0,$0,$0
 .byte $0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
 .byte $0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
 .byte $0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
 .byte $0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
 .byte $0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
 .byte $0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
-.byte $0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
-.byte $0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
-.byte $0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
-.byte $0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
-.byte $0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
-.byte $0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
-.byte $0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
-.byte $0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
-.byte $0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Here we add the CHR-ROM data, included from an external .CHR file
