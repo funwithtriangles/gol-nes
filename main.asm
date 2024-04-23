@@ -40,7 +40,14 @@ InitVariables:
     RESET_BG_PTR
 
 Main:  
-    jsr LoadPalette          
+    jsr LoadPalette  
+
+    ldx #0
+    :
+        lda InitialBoard,x
+        sta Board1,x
+        inx
+        bne :-
 
 EnablePPURendering:
     lda #%10010000           ; Enable NMI and set background to use the 2nd pattern table (at $1000)
@@ -61,6 +68,10 @@ NMI:
     lda #0
     sta PPU_SCROLL           ; Disable scroll in X
     sta PPU_SCROLL           ; Disable scroll in Y
+
+SetDrawComplete:
+    lda #1
+    sta IsDrawComplete
 
     rti 
 
