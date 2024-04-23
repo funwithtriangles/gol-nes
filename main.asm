@@ -8,9 +8,9 @@
 .include "SwapBoards.inc"
 
 .segment "ZEROPAGE"
+IsDrawComplete: .res 1
 Frame:          .res 1           ; Counts frames
 BgPtr:          .res 2           ; Pointer to background address - 16bits (lo,hi)
-IsDrawComplete: .res 1
 ZReg:           .res 1
 CurrCellDraw:   .res 1
 CurrBoardRd:    .res 1
@@ -44,7 +44,7 @@ InitVariables:
     sta CurrCellDraw
     sta CurrBoardRd
     sta CurrCellIsAlive
-    
+
     RESET_BG_PTR
     SET_PTR BoardPtrWr,Board1
     SET_PTR BoardPtrRd,Board0
@@ -148,11 +148,6 @@ GameLoop:
             bne Loop
 
     SwapBoards
-
-     ; TODO: Probably nicer way to pause
-    jsr WaitFrame
-
-   
     jmp GameLoop
 
 
@@ -166,6 +161,7 @@ NMI:
     pha
     tya
     pha
+    php
 
     inc Frame                ; Frame++
     jsr DrawBoard  
@@ -174,11 +170,8 @@ NMI:
     sta PPU_SCROLL           ; Disable scroll in X
     sta PPU_SCROLL           ; Disable scroll in Y
 
-SetDrawComplete:
-    lda #1
-    sta IsDrawComplete
-
-    pla            ; restore regs and exit
+    plp                     ; restore regs and exit
+    pla           
     tay
     pla
     tax
