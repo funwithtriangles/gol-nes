@@ -4,6 +4,7 @@
 .include "utils.inc"
 .include "resetBgPtr.inc"
 .include "initboard.inc"
+.include "WaitFrame.inc"
 
 .segment "ZEROPAGE"
 Frame:          .res 1           ; Counts frames
@@ -54,14 +55,7 @@ GameLoop:
         inx
         bne :-
 
-    lda IsDrawComplete
-    WaitVBlank:
-        cmp IsDrawComplete
-        beq WaitVBlank
-    
-    lda #0
-    sta IsDrawComplete
-
+    WAIT_FRAME
     jmp GameLoop
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
