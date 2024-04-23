@@ -1,4 +1,4 @@
-.macro WAIT_FRAME
+.proc WaitFrame
   lda IsDrawComplete
     WaitVBlank:
         cmp IsDrawComplete
@@ -6,4 +6,5 @@
     
     lda #0
     sta IsDrawComplete
-.endmacro
+    rts
+.endproc
