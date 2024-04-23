@@ -3,6 +3,7 @@
 .include "reset.inc"
 .include "utils.inc"
 .include "resetBgPtr.inc"
+.include "initboard.inc"
 
 .segment "ZEROPAGE"
 Buttons:        .res 1           ; Pressed buttons (A|B|Select|Start|Up|Dwn|Lft|Rgt)
@@ -25,7 +26,6 @@ Board1:     .res 256
 .include "drawboard.inc"
 .include "loadbackground.inc"
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Reset handler (called when the NES resets or powers on)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -41,13 +41,7 @@ InitVariables:
 
 Main:  
     jsr LoadPalette  
-
-    ldx #0
-    :
-        lda InitialBoard,x
-        sta Board1,x
-        inx
-        bne :-
+    INIT_BOARD
 
 EnablePPURendering:
     lda #%10010000           ; Enable NMI and set background to use the 2nd pattern table (at $1000)
@@ -56,6 +50,14 @@ EnablePPURendering:
     sta PPU_MASK             ; Set PPU_MASK bits to render the background
    
 GameLoop:
+    lda IsDrawComplete
+    WaitVBlank:
+        cmp IsDrawComplete
+        jmp WaitVBlank
+    
+    lda #0
+    sta IsDrawComplete
+
     jmp GameLoop
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
