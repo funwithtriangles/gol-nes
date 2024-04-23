@@ -5,6 +5,7 @@
 .include "resetBgPtr.inc"
 .include "initboard.inc"
 .include "WaitFrame.inc"
+.include "setboardptr.inc"
 
 .segment "ZEROPAGE"
 Frame:          .res 1           ; Counts frames
@@ -12,11 +13,13 @@ BgPtr:          .res 2           ; Pointer to background address - 16bits (lo,hi
 IsDrawComplete: .res 1
 ZReg:           .res 1
 CurrCellDraw:   .res 1
+BoardPtr:       .res 2
 
 
 
 .segment "RAM"   
 Board1:     .res 256
+Board2:     .res 256
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; PRG-ROM code located at $8000
@@ -36,6 +39,7 @@ InitVariables:
     sta Frame                ; Frame = 0
     sta CurrCellDraw
     RESET_BG_PTR
+    SET_BOARD_PTR Board1
 
 Main:  
     jsr LoadPalette  
