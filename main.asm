@@ -13,13 +13,14 @@ BgPtr:          .res 2           ; Pointer to background address - 16bits (lo,hi
 IsDrawComplete: .res 1
 ZReg:           .res 1
 CurrCellDraw:   .res 1
+CurrBoard:      .res 1
 BoardPtr:       .res 2
 
 
 
 .segment "RAM"   
+Board0:     .res 256
 Board1:     .res 256
-Board2:     .res 256
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; PRG-ROM code located at $8000
@@ -38,8 +39,10 @@ InitVariables:
     lda #0
     sta Frame                ; Frame = 0
     sta CurrCellDraw
+    sta CurrBoard
+    
     RESET_BG_PTR
-    SET_BOARD_PTR Board1
+    SET_BOARD_PTR Board0
 
 Main:  
     jsr LoadPalette  
@@ -55,7 +58,7 @@ GameLoop:
     ldx #0
     :
         lda Frame
-        sta Board1,x
+        sta Board0,x
         inx
         bne :-
 
