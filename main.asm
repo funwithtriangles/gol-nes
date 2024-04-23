@@ -6,9 +6,7 @@
 .include "initboard.inc"
 
 .segment "ZEROPAGE"
-Buttons:        .res 1           ; Pressed buttons (A|B|Select|Start|Up|Dwn|Lft|Rgt)
 Frame:          .res 1           ; Counts frames
-Clock60:        .res 1           ; Counter that increments per second (60 frames)
 BgPtr:          .res 2           ; Pointer to background address - 16bits (lo,hi)
 IsDrawComplete: .res 1
 ZReg:           .res 1
@@ -35,7 +33,6 @@ Reset:
 InitVariables:
     lda #0
     sta Frame                ; Frame = 0
-    sta Clock60              ; Clock60 = 0
     sta CurrCellDraw
     RESET_BG_PTR
 
@@ -50,10 +47,17 @@ EnablePPURendering:
     sta PPU_MASK             ; Set PPU_MASK bits to render the background
    
 GameLoop:
+    ldx #0
+    :
+        lda Frame
+        sta Board1,x
+        inx
+        bne :-
+
     lda IsDrawComplete
     WaitVBlank:
         cmp IsDrawComplete
-        jmp WaitVBlank
+        beq WaitVBlank
     
     lda #0
     sta IsDrawComplete
@@ -64,6 +68,12 @@ GameLoop:
 ;; NMI interrupt handler
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 NMI:
+    pha         ; back up registers (important)
+    txa
+    pha
+    tya
+    pha
+
     inc Frame                ; Frame++
     jsr DrawBoard  
 
@@ -75,7 +85,13 @@ SetDrawComplete:
     lda #1
     sta IsDrawComplete
 
-    rti 
+    pla            ; restore regs and exit
+    tay
+    pla
+    tax
+    pla
+    rti
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; IRQ interrupt handler
