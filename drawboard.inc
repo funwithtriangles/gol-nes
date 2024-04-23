@@ -9,7 +9,7 @@ PPU_SETADDR_PTR BgPtr
 
 :
     ldy CurrCellDraw
-    lda (BoardPtr),y
+    lda (BoardPtrRd),y
     sta PPU_DATA  
     inc CurrCellDraw
     beq Reset             

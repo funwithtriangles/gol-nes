@@ -6,6 +6,7 @@
 .include "initboard.inc"
 .include "WaitFrame.inc"
 .include "setboardptr.inc"
+.include "SwapBoards.inc"
 
 .segment "ZEROPAGE"
 Frame:          .res 1           ; Counts frames
@@ -13,8 +14,9 @@ BgPtr:          .res 2           ; Pointer to background address - 16bits (lo,hi
 IsDrawComplete: .res 1
 ZReg:           .res 1
 CurrCellDraw:   .res 1
-CurrBoard:      .res 1
-BoardPtr:       .res 2
+CurrBoardRd:    .res 1
+BoardPtrRd:     .res 2
+BoardPtrWr:     .res 2
 
 
 
@@ -39,10 +41,11 @@ InitVariables:
     lda #0
     sta Frame                ; Frame = 0
     sta CurrCellDraw
-    sta CurrBoard
+    sta CurrBoardRd
     
     RESET_BG_PTR
-    SET_BOARD_PTR Board0
+    SET_PTR BoardPtrWr,Board1
+    SET_PTR BoardPtrRd,Board0
 
 Main:  
     jsr LoadPalette  
@@ -55,13 +58,14 @@ EnablePPURendering:
     sta PPU_MASK             ; Set PPU_MASK bits to render the background
    
 GameLoop:
-    ldx #0
+    ldy #0
     :
-        lda Frame
-        sta Board0,x
-        inx
+        lda (BoardPtrRd),y
+        sta (BoardPtrWr),y
+        iny
         bne :-
 
+    SwapBoards
     WAIT_FRAME
     jmp GameLoop
 
