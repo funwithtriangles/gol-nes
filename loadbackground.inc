@@ -4,7 +4,7 @@
 :   lda AttributeData,y      ; Lookup byte in ROM
     sta PPU_DATA             ; Set value to send to PPU_DATA
     iny                      ; Y++
-    cpy #16                  ; Is Y equal to 16?
+    cpy #64                  ; Is Y equal to 64?
     bne :-                   ; Not yet, keep looping
     rts                      ; Return from subroutine
 .endproc
