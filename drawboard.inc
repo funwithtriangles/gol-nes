@@ -1,20 +1,18 @@
 .proc DrawBoard
-lda #$A8
-sta BgPtr
-lda #$20
-sta BgPtr+1
 
 ldx #0
 ldy #16
-lda #16
+lda #4
 sta ZReg
 
 PPU_SETADDR_PTR BgPtr          
 
 :
-    lda InitialBoard,x 
-    sta PPU_DATA   
-    inx            
+    ldx CurrCellDraw
+    lda InitialBoard,x
+    sta PPU_DATA  
+    inc CurrCellDraw
+    beq Reset             
     dey          
     bne :-                  
         ldy #16
@@ -22,5 +20,10 @@ PPU_SETADDR_PTR BgPtr
         PPU_SETADDR_PTR BgPtr    
         dec ZReg     
     bne :-
+        rts
+    Reset:
+        lda #0
+        sta CurrCellDraw
+        RESET_BG_PTR
         rts
 .endproc

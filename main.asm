@@ -2,6 +2,7 @@
 .include "header.inc"
 .include "reset.inc"
 .include "utils.inc"
+.include "resetBgPtr.inc"
 
 .segment "ZEROPAGE"
 Buttons:        .res 1           ; Pressed buttons (A|B|Select|Start|Up|Dwn|Lft|Rgt)
@@ -9,7 +10,10 @@ Frame:          .res 1           ; Counts frames
 Clock60:        .res 1           ; Counter that increments per second (60 frames)
 BgPtr:          .res 2           ; Pointer to background address - 16bits (lo,hi)
 IsDrawComplete: .res 1
-ZReg:       .res 1
+ZReg:           .res 1
+CurrCellDraw:   .res 1
+
+
 
 .segment "RAM"   
 Board1:     .res 256
@@ -32,17 +36,15 @@ InitVariables:
     lda #0
     sta Frame                ; Frame = 0
     sta Clock60              ; Clock60 = 0
+    sta CurrCellDraw
+    RESET_BG_PTR
 
 Main:  
-    jsr LoadPalette    
-    jsr DrawBoard          
+    jsr LoadPalette          
 
 EnablePPURendering:
     lda #%10010000           ; Enable NMI and set background to use the 2nd pattern table (at $1000)
     sta PPU_CTRL
-    lda #0
-    sta PPU_SCROLL           ; Disable scroll in X
-    sta PPU_SCROLL           ; Disable scroll in Y
     lda #%00011110
     sta PPU_MASK             ; Set PPU_MASK bits to render the background
    
@@ -54,7 +56,11 @@ GameLoop:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 NMI:
     inc Frame                ; Frame++
-  
+    jsr DrawBoard  
+
+    lda #0
+    sta PPU_SCROLL           ; Disable scroll in X
+    sta PPU_SCROLL           ; Disable scroll in Y
 
     rti 
 
