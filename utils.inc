@@ -59,3 +59,21 @@
         lda val
     :
 .endmacro
+
+.macro PushRegs
+    pha         
+    txa
+    pha
+    tya
+    pha
+    php
+.endmacro
+
+.macro PullRegs
+    plp                     
+    pla           
+    tay
+    pla
+    tax
+    pla
+.endmacro
