@@ -78,7 +78,7 @@ GameLoop:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 NMI:
     PushRegs
-    
+
     inc Frame                ; Frame++
     jsr DrawBoard  
 
@@ -87,7 +87,7 @@ NMI:
     sta PPU_SCROLL           ; Disable scroll in Y
 
     PullRegs
-  rti
+    rti
 
 
 
