@@ -26,6 +26,7 @@ PPU_SETADDR_PTR BgPtr
     Reset:
         lda #0
         sta CurrCellDraw
+        inc IsDrawComplete
         RESET_BG_PTR
         rts
 .endproc

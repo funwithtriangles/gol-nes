@@ -66,6 +66,9 @@ EnablePPURendering:
     sta PPU_MASK             ; Set PPU_MASK bits to render the background
 
 GameLoop:
+    jsr WaitFrame
+    jsr WaitFrame
+
     LifeLoop
     SwapBoards
     
