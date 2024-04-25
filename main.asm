@@ -10,16 +10,18 @@
 .include "UpdateFrameOffset.inc"
 
 .segment "ZEROPAGE"
-Frame:          .res 1 
-FrameOffset:    .res 1  
-IsDrawComplete: .res 1
-BgPtr:          .res 2           ; Pointer to background address - 16bits (lo,hi)
-ZReg:           .res 1
-CurrCellDraw:   .res 1
-CurrBoardRd:    .res 1
-BoardPtrRd:     .res 2
-BoardPtrWr:     .res 2
-CurrCellIsAlive:.res 1
+Frame:              .res 1 
+FrameOffset:        .res 1  
+IsDrawComplete:     .res 1
+BgPtr:              .res 2           ; Pointer to background address - 16bits (lo,hi)
+ZReg:               .res 1
+CurrCellDraw:       .res 1
+CurrBoardRd:        .res 1
+BoardPtrRd:         .res 2
+BoardPtrWr:         .res 2
+CurrCellIsAliveA:   .res 1
+CurrCellIsAliveB:   .res 1
+BoardBCellCount:    .res 1
 
 .segment "RAM"   
 Board0:     .res 256
@@ -45,7 +47,8 @@ InitVariables:
     sta FrameOffset
     sta CurrCellDraw
     sta CurrBoardRd
-    sta CurrCellIsAlive
+    sta CurrCellIsAliveA
+    sta CurrCellIsAliveB
 
     RESET_BG_PTR
     SET_PTR BoardPtrWr,Board1

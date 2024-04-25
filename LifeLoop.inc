@@ -1,21 +1,41 @@
 
 .macro CheckCell
 lda (BoardPtrRd),y
-beq :+
-    inx
-:
+beq :++
+    pha
+    and #%01
+    beq :+
+        inx
+    :
+
+    pla
+    and #%10
+    beq :+
+        inc BoardBCellCount
+    :
 .endmacro
 
 .macro LifeLoop
 ldy #0
 Loop:
-    ldx #0
-    stx CurrCellIsAlive
+    ldx #0                 ; x is BoardACellCount
+    stx BoardBCellCount
+    stx CurrCellIsAliveA
+    stx CurrCellIsAliveB
 
     ; Check curr cell
     lda (BoardPtrRd),y
+
+    pha
+    and #%01
     beq :+
-        inc CurrCellIsAlive
+        inc CurrCellIsAliveA
+    :
+
+    pla
+    and #%10
+    beq :+
+        inc CurrCellIsAliveB
     :
 
     ; Check prev cell
@@ -64,22 +84,47 @@ Loop:
     tay
 
     cpx #3
-    beq Alive
+    beq AliveA
     
-    lda CurrCellIsAlive
-    beq Dead
+    lda CurrCellIsAliveA
+    beq DeadA
         cpx #2
-        beq Alive
+        beq AliveA
 
-    Dead:
+    DeadA:
         lda #$0
-        jmp Continue
+        jmp ContinueA
 
-    Alive:
-        lda #$1
+    AliveA:
+        lda #%01
         
-    Continue:
+    ContinueA:
         sta (BoardPtrWr),y
+
+    ldx BoardBCellCount
+    cpx #3
+    beq AliveB
+    
+    lda CurrCellIsAliveB
+    beq DeadB
+        cpx #2
+        beq AliveB
+
+    DeadB:
+        lda #$0
+        jmp ContinueB
+
+    AliveB:
+        lda #%10
+        
+    ContinueB:
+    ; Combine both boards into one
+        ora (BoardPtrWr),y
+        sta (BoardPtrWr),y
+    
+    ; Keep looping
         iny
-        bne Loop
+        beq :+
+            jmp Loop
+        : 
 .endmacro
