@@ -1,7 +1,7 @@
 .macro UpdateFrameOffset
     lda Frame
-    and #%00000111
-    bne :-
+    and #%00000011
+    bne :++
         lda FrameOffset
         clc
         adc #$10

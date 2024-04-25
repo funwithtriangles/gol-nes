@@ -65,7 +65,7 @@ EnablePPURendering:
 GameLoop:
     LifeLoop
     SwapBoards
-    UpdateFrameOffset
+    
 
     jmp GameLoop
 
@@ -73,8 +73,8 @@ NMI:
     PushRegs
     
     inc Frame                ; Frame++
-   
-
+    UpdateFrameOffset
+    
     jsr DrawBoard  
 
     lda #0
