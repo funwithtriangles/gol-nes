@@ -1,5 +1,5 @@
 PaletteData:
-.byte $19,$2A,$25,$30, $19,$19,$19,$19, $19,$19,$19,$19, $19,$19,$19,$19 ; Background palette
+.byte $19,$2A,$25,$38, $19,$19,$19,$19, $19,$19,$19,$19, $19,$19,$19,$19 ; Background palette
 .byte $19,$1D,$19,$29, $19,$08,$18,$38, $19,$0C,$1C,$3C, $19,$2D,$10,$30 ; Sprite palette
 
 AttributeData:

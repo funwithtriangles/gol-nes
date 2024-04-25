@@ -7,10 +7,12 @@
 .include "setboardptr.inc"
 .include "SwapBoards.inc"
 .include "LifeLoop.inc"
+.include "UpdateFrameOffset.inc"
 
 .segment "ZEROPAGE"
+Frame:          .res 1 
+FrameOffset:    .res 1  
 IsDrawComplete: .res 1
-Frame:          .res 1           ; Counts frames
 BgPtr:          .res 2           ; Pointer to background address - 16bits (lo,hi)
 ZReg:           .res 1
 CurrCellDraw:   .res 1
@@ -39,7 +41,8 @@ Reset:
 
 InitVariables:
     lda #0
-    sta Frame                ; Frame = 0
+    sta Frame              
+    sta FrameOffset
     sta CurrCellDraw
     sta CurrBoardRd
     sta CurrCellIsAlive
@@ -61,14 +64,17 @@ EnablePPURendering:
 
 GameLoop:
     LifeLoop
-
     SwapBoards
+    UpdateFrameOffset
+
     jmp GameLoop
 
 NMI:
     PushRegs
-
+    
     inc Frame                ; Frame++
+   
+
     jsr DrawBoard  
 
     lda #0

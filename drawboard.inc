@@ -10,6 +10,8 @@ PPU_SETADDR_PTR BgPtr
 :
     ldy CurrCellDraw
     lda (BoardPtrRd),y
+    clc
+    adc FrameOffset
     sta PPU_DATA  
     inc CurrCellDraw
     beq Reset             
