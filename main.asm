@@ -48,13 +48,13 @@ InitVariables:
     SET_PTR BoardPtrWr,Board1
     SET_PTR BoardPtrRd,Board0
 
-Main:       
+Main:   
     jsr LoadPalette    
     jsr LoadAttributes  
     INIT_BOARD
 
 EnablePPURendering:
-    lda #%10010000           ; Enable NMI and set background to use the 2nd pattern table (at $1000)
+    lda #%10000000           ; Enable NMI and set background to use the 2nd pattern table (at $1000)
     sta PPU_CTRL
     lda #%00011110
     sta PPU_MASK             ; Set PPU_MASK bits to render the background
@@ -84,7 +84,7 @@ IRQ:
 
 .include "data.inc"
 .segment "CHARS"
-.incbin "battle.chr"
+.incbin "gol.chr"
 
 .segment "VECTORS"
 .word NMI                    ; Address (2 bytes) of the NMI handler
