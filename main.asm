@@ -60,23 +60,16 @@ EnablePPURendering:
     sta PPU_MASK             ; Set PPU_MASK bits to render the background
 
 GameLoop:
-    jsr WaitFrame
-    jsr WaitFrame
-    jsr WaitFrame
-    jsr WaitFrame
-    jsr WaitFrame
+    WaitFrames 5            ; Only process every board every 5 frames
     LifeLoop
     SwapBoards
-    
-
     jmp GameLoop
 
 NMI:
     PushRegs
     
-    inc Frame                ; Frame++
+    inc Frame               
     UpdateFrameOffset
-    
     jsr DrawBoard  
 
     lda #0

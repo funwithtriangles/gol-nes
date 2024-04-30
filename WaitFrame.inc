@@ -8,3 +8,11 @@
     sta IsDrawComplete
     rts
 .endproc
+
+.macro WaitFrames num
+  ldx #num
+    :
+        jsr WaitFrame
+        dex
+        bne :-
+.endmacro
