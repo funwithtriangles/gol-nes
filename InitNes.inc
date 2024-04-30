@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Macro to initialize the NES by disabling rendering and clearing RAM values
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-.macro INIT_NES
+.macro InitNes
     sei                      ; Disable all IRQ interrupts
     cld                      ; Clear decimal mode (not supported by the NES)
     ldx #$FF

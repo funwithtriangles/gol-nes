@@ -5,7 +5,7 @@ ldx #16
 lda #4
 sta ZReg
 
-PPU_SETADDR_PTR BgPtr          
+PPUSetAddrPtr BgPtr          
 
 :
     ldy CurrCellDraw
@@ -18,8 +18,8 @@ PPU_SETADDR_PTR BgPtr
     dex          
     bne :-                  
         ldx #16
-        ADD_FIXED BgPtr, #32
-        PPU_SETADDR_PTR BgPtr    
+        AddFixed BgPtr, #32
+        PPUSetAddrPtr BgPtr    
         dec ZReg     
     bne :-
         rts
@@ -27,6 +27,6 @@ PPU_SETADDR_PTR BgPtr
         lda #0
         sta CurrCellDraw
         inc IsDrawComplete
-        RESET_BG_PTR
+        ResetBgPtr
         rts
 .endproc

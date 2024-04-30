@@ -1,4 +1,4 @@
-.macro INIT_BOARD
+.macro InitBoard
 ldx #0
 :
     lda InitialBoard,x

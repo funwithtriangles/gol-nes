@@ -1,10 +1,9 @@
 .include "consts.inc"
 .include "header.inc"
-.include "reset.inc"
 .include "utils.inc"
-.include "resetBgPtr.inc"
-.include "initboard.inc"
-.include "setboardptr.inc"
+.include "InitNes.inc"
+.include "ResetBgPtr.inc"
+.include "InitBoard.inc"
 .include "SwapBoards.inc"
 .include "LifeLoop.inc"
 .include "UpdateFrameOffset.inc"
@@ -13,7 +12,7 @@
 Frame:              .res 1 
 FrameOffset:        .res 1  
 IsDrawComplete:     .res 1
-BgPtr:              .res 2           ; Pointer to background address - 16bits (lo,hi)
+BgPtr:              .res 2           
 ZReg:               .res 1
 CurrCellDraw:       .res 1
 CurrBoardRd:        .res 1
@@ -28,12 +27,12 @@ Board0:     .res 256
 Board1:     .res 256
 
 .segment "CODE"
-.include "drawboard.inc"
-.include "loadbackground.inc"
+.include "DrawBoard.inc"
+.include "loadData.inc"
 .include "WaitFrame.inc"
 
 Reset:
-    INIT_NES                 ; Macro to initialize the NES to a known state
+    InitNes                 
 
 InitVariables:
     lda #0
@@ -41,17 +40,15 @@ InitVariables:
     sta FrameOffset
     sta CurrCellDraw
     sta CurrBoardRd
-    sta CurrCellIsAliveA
-    sta CurrCellIsAliveB
 
-    RESET_BG_PTR
-    SET_PTR BoardPtrWr,Board1
-    SET_PTR BoardPtrRd,Board0
+    ResetBgPtr
+    SetPtr BoardPtrWr,Board1
+    SetPtr BoardPtrRd,Board0
 
 Main:   
     jsr LoadPalette    
     jsr LoadAttributes  
-    INIT_BOARD
+    InitBoard
 
 EnablePPURendering:
     lda #%10000000           ; Enable NMI and set background to use the 2nd pattern table (at $1000)
@@ -60,7 +57,7 @@ EnablePPURendering:
     sta PPU_MASK             ; Set PPU_MASK bits to render the background
 
 GameLoop:
-    WaitFrames 5            ; Only process every board every 5 frames
+    WaitFrames 5             ; Only process every board every 5 frames
     LifeLoop
     SwapBoards
     jmp GameLoop

@@ -1,4 +1,4 @@
-.macro RESET_BG_PTR
+.macro ResetBgPtr
     lda #$C8
     sta BgPtr
     lda #$20
