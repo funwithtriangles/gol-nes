@@ -9,3 +9,6 @@ Board state is stored in 256 bytes. Each cell is a byte, with both boards repres
 2*256 bytes is needed (Board0 and Board1). While the game is reading off one board, it is writing to the other.
 
 *Note: This is my first NES project, don't use this as an example of best practice!*
+
+## Build
+Just run `make` to build it. You can then run `make run` to open up the rom in FCEUX emulator.
