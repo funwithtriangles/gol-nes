@@ -27,17 +27,11 @@ BoardBCellCount:    .res 1
 Board0:     .res 256
 Board1:     .res 256
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; PRG-ROM code located at $8000
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .segment "CODE"
 .include "drawboard.inc"
 .include "loadbackground.inc"
 .include "WaitFrame.inc"
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Reset handler (called when the NES resets or powers on)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Reset:
     INIT_NES                 ; Macro to initialize the NES to a known state
 
@@ -68,7 +62,9 @@ EnablePPURendering:
 GameLoop:
     jsr WaitFrame
     jsr WaitFrame
-
+    jsr WaitFrame
+    jsr WaitFrame
+    jsr WaitFrame
     LifeLoop
     SwapBoards
     
